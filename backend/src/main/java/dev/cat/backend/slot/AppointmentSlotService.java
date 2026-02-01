@@ -1,6 +1,7 @@
 package dev.cat.backend.slot;
 
 
+import dev.cat.backend.exception.NotFoundException;
 import dev.cat.backend.slot.dto.SlotRequest;
 import dev.cat.backend.slot.dto.SlotResponse;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,12 @@ public class AppointmentSlotService {
         return repository.findSlots(filter);
     }
 
-    public Optional<SlotResponse> findSlotById(Long id) {
-        return repository.findSlotById(id);
+    public SlotResponse findSlotById(Long id) {
+        Optional<SlotResponse> response = repository.findSlotById(id);
+        if (response.isEmpty()) {
+            throw new NotFoundException("Slot with id " + id + " not found");
+        }
+        return response.get();
     }
 
     public Long createSlot(SlotRequest slot) {

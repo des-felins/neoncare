@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,8 +35,7 @@ public class AppointmentSlotController {
             @NotNull
             @PathVariable
             Long id) {
-        return appointmentSlotService.findSlotById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Slot not found"));
+        return appointmentSlotService.findSlotById(id);
 
     }
 
