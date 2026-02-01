@@ -1,11 +1,9 @@
 package dev.cat.backend.staff;
 
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +18,12 @@ public class StaffController {
     }
 
     @GetMapping("/{specialtyId}")
-    public ResponseEntity<List<StaffResponse>> getAllStuffBySpecialtyId(@PathVariable Long specialtyId) {
-        return ResponseEntity.ok(staffService.findStaffBySpecialtyId(specialtyId));
+    @ResponseStatus(HttpStatus.OK)
+    public List<StaffResponse> getAllStuffBySpecialtyId(
+            @NotNull
+            @PathVariable
+            Long specialtyId) {
+        return staffService.findStaffBySpecialtyId(specialtyId);
     }
 
 }

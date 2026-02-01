@@ -1,11 +1,9 @@
 package dev.cat.backend.scheduling;
 
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +18,12 @@ public class SchedulingController {
     }
 
     @GetMapping("/{triageCaseId}")
-    public ResponseEntity<List<SlotSuggestionResponse>> getSuggestedSlotsByTriageCaseId(@PathVariable Long triageCaseId) {
-        return ResponseEntity.ok(schedulingService.suggestSlotsForTriageCase(triageCaseId));
+    @ResponseStatus(HttpStatus.OK)
+    public List<SlotSuggestionResponse> getSuggestedSlotsByTriageCaseId(
+            @NotNull
+            @PathVariable
+            Long triageCaseId) {
+        return schedulingService.suggestSlotsForTriageCase(triageCaseId);
     }
 
 }
