@@ -1,49 +1,99 @@
 package dev.cat.backend.exception;
 
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
-public class ErrorHandler {
+public class ErrorHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFound(final NotFoundException ex) {
-        return new ErrorResponse(ex.getMessage());
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleNotFound(
+            NotFoundException ex,
+            WebRequest request) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setInstance(extractPath(request));
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
+
+        return problemResponse(problemDetail);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+    public ResponseEntity<ProblemDetail> handleValidationExceptions(
+            MethodArgumentNotValidException ex,
+            WebRequest request) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setInstance(extractPath(request));
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
+
+        List<Map<String, String>> errors = ex.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(err -> {
+                    assert err.getDefaultMessage() != null;
+                    return Map.of(
+                            "field", ((FieldError) err).getField(),
+                            "message", err.getDefaultMessage()
+                    );
+                })
+                .toList();
+        problemDetail.setProperty("errors", errors);
+
+        return problemResponse(problemDetail);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public List<String> handleConstraintValidationExceptions(ConstraintViolationException ex) {
-        List<String> errors = new ArrayList<>();
-        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            errors.add(violation.getMessage());
-        }
-        return errors;
+    public ResponseEntity<ProblemDetail> handleConstraintValidationExceptions(
+            ConstraintViolationException ex,
+            WebRequest request) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setInstance(extractPath(request));
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
+
+        List<Map<String, String>> violations = ex.getConstraintViolations()
+                .stream()
+                .map(v -> Map.of(
+                        "path", v.getPropertyPath().toString(),
+                        "message", v.getMessage()
+                ))
+                .toList();
+
+        problemDetail.setProperty("violations", violations);
+
+        return problemResponse(problemDetail);
+    }
+
+    private URI extractPath(WebRequest request) {
+        String desc = request.getDescription(false);
+        String uriPart = desc.startsWith("uri=") ? desc.substring(4) : desc;
+        return URI.create(uriPart);
+    }
+
+    private ResponseEntity<ProblemDetail> problemResponse(ProblemDetail problemDetail) {
+        return ResponseEntity
+                .status(problemDetail.getStatus())
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(problemDetail);
     }
 
 }

@@ -6,15 +6,18 @@ import dev.cat.backend.slot.dto.SlotResponse;
 import dev.cat.backend.slot.validation.district.ExistingDistrict;
 import dev.cat.backend.slot.validation.facility.ExistingFacility;
 import dev.cat.backend.slot.validation.specialty.ExistingSpecialty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/slot")
+@Validated
 public class AppointmentSlotController {
 
     private final AppointmentSlotService appointmentSlotService;
@@ -28,6 +31,7 @@ public class AppointmentSlotController {
     public List<SlotResponse> getAllSlots(
             @NotNull
             @RequestBody
+            @Valid
             @ExistingDistrict
             @ExistingFacility
             @ExistingSpecialty
@@ -51,6 +55,7 @@ public class AppointmentSlotController {
     public Long createSlot(
             @NotNull
             @RequestBody
+            @Valid
             @ExistingFacility
             @ExistingSpecialty
             SlotRequest slotDto) {
@@ -66,6 +71,7 @@ public class AppointmentSlotController {
             Long id,
             @NotNull
             @RequestBody
+            @Valid
             @Positive(message = "Slot capacity should be greater than zero.")
             int newCapacity) {
         appointmentSlotService.updateSlot(id, newCapacity);

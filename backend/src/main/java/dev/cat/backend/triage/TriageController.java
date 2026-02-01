@@ -3,10 +3,12 @@ package dev.cat.backend.triage;
 import dev.cat.backend.triage.dto.TriageCaseDetailsResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/triage")
+@Validated
 public class TriageController {
 
     private final TriageService triageService;
