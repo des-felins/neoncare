@@ -7,11 +7,9 @@ import jakarta.validation.constraints.Positive;
 import java.time.OffsetDateTime;
 
 public record SlotRequest(
-        @NotNull @Positive Long facilityId,
-        String facilityName,
-        @NotNull @Positive Long specialtyId,
-        String specialtyName,
-        @NotNull @Positive @Future OffsetDateTime startsAt,
-        @NotNull @Positive @Future OffsetDateTime endsAt,
-        @NotNull @Positive int capacity) {
+        @NotNull Long facilityId,
+        @NotNull Long specialtyId,
+        @NotNull @Future(message = "Slot should start in the future.") OffsetDateTime startsAt,
+        @NotNull @Future(message = "Slot should end in the future.") OffsetDateTime endsAt,
+        @NotNull @Positive(message = "Slot capacity should be greater than zero.") int capacity) {
 }

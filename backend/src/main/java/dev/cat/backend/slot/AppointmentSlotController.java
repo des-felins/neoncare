@@ -3,6 +3,9 @@ package dev.cat.backend.slot;
 
 import dev.cat.backend.slot.dto.SlotRequest;
 import dev.cat.backend.slot.dto.SlotResponse;
+import dev.cat.backend.slot.validation.district.ExistingDistrict;
+import dev.cat.backend.slot.validation.facility.ExistingFacility;
+import dev.cat.backend.slot.validation.specialty.ExistingSpecialty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,9 @@ public class AppointmentSlotController {
     public List<SlotResponse> getAllSlots(
             @NotNull
             @RequestBody
+            @ExistingDistrict
+            @ExistingFacility
+            @ExistingSpecialty
             SlotFilter filter) {
         return appointmentSlotService.findSlots(filter);
     }
@@ -45,6 +51,8 @@ public class AppointmentSlotController {
     public Long createSlot(
             @NotNull
             @RequestBody
+            @ExistingFacility
+            @ExistingSpecialty
             SlotRequest slotDto) {
         return appointmentSlotService.createSlot(slotDto);
 
@@ -58,14 +66,14 @@ public class AppointmentSlotController {
             Long id,
             @NotNull
             @RequestBody
-            @Positive
+            @Positive(message = "Slot capacity should be greater than zero.")
             int newCapacity) {
         appointmentSlotService.updateSlot(id, newCapacity);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteUser(
+    public void deleteSlot(
             @NotNull
             @PathVariable Long id) {
         appointmentSlotService.deleteSlot(id);

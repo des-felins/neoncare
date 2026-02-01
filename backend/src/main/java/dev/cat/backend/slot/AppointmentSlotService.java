@@ -1,6 +1,7 @@
 package dev.cat.backend.slot;
 
 
+import dev.cat.backend.exception.InvalidInputException;
 import dev.cat.backend.exception.NotFoundException;
 import dev.cat.backend.slot.dto.SlotRequest;
 import dev.cat.backend.slot.dto.SlotResponse;
@@ -33,7 +34,7 @@ public class AppointmentSlotService {
     public Long createSlot(SlotRequest slot) {
 
         if (!slot.endsAt().isAfter(slot.startsAt())) {
-            throw new IllegalArgumentException("End time must be later than start time");
+            throw new InvalidInputException("End time must be later than start time");
         }
 
         return repository.createSlot(slot);
