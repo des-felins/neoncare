@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
-public class ErrorHandler extends ResponseEntityExceptionHandler {
+public class ErrorHandler {
 
 
     @ExceptionHandler(NotFoundException.class)
@@ -45,12 +45,12 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
 
         List<Map<String, String>> errors = ex.getBindingResult()
-                .getAllErrors()
+                .getFieldErrors()
                 .stream()
                 .map(err -> {
                     assert err.getDefaultMessage() != null;
                     return Map.of(
-                            "field", ((FieldError) err).getField(),
+                            "field", err.getField(),
                             "message", err.getDefaultMessage()
                     );
                 })
