@@ -2,7 +2,6 @@ package dev.cat.backend.scheduling;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,10 +14,6 @@ public class SchedulingService {
     }
 
     public List<SlotSuggestionResponse> suggestSlotsForTriageCase(Long triageCaseId) {
-
-        if (triageCaseId <= 0) {
-            return new ArrayList<>();
-        }
         return schedulingRepository.suggestSlots(triageCaseId);
 
     }

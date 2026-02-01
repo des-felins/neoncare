@@ -2,7 +2,6 @@ package dev.cat.backend.staff;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,11 +14,6 @@ public class StaffService {
     }
 
     public List<StaffResponse> findStaffBySpecialtyId(Long specialtyId) {
-
-        if (specialtyId <= 0) {
-            return new ArrayList<>();
-        }
-
         return staffRepository.findStaffBySpecialtyId(specialtyId);
     }
 

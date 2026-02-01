@@ -15,10 +15,6 @@ public class TriageService {
     }
 
     public Optional<TriageCaseDetailsResponse> findTriageCase(Long triageCaseId) {
-        if (triageCaseId <= 0) {
-            return Optional.empty();
-        }
-
         return triageRepository.findTriageCase(triageCaseId);
     }
 
