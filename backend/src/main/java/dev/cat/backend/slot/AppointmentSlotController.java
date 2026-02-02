@@ -3,9 +3,6 @@ package dev.cat.backend.slot;
 
 import dev.cat.backend.slot.dto.SlotRequest;
 import dev.cat.backend.slot.dto.SlotResponse;
-import dev.cat.backend.slot.validation.district.ExistingDistrict;
-import dev.cat.backend.slot.validation.facility.ExistingFacility;
-import dev.cat.backend.slot.validation.specialty.ExistingSpecialty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -32,9 +29,6 @@ public class AppointmentSlotController {
             @NotNull
             @RequestBody
             @Valid
-            @ExistingDistrict
-            @ExistingFacility
-            @ExistingSpecialty
             SlotFilter filter) {
         return appointmentSlotService.findSlots(filter);
     }
@@ -56,8 +50,6 @@ public class AppointmentSlotController {
             @NotNull
             @RequestBody
             @Valid
-            @ExistingFacility
-            @ExistingSpecialty
             SlotRequest slotDto) {
         return appointmentSlotService.createSlot(slotDto);
 

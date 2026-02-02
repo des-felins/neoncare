@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,19 @@ public class ErrorHandler {
             WebRequest request) {
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setInstance(extractPath(request));
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
+
+        return problemResponse(problemDetail);
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidInput(
+            InvalidInputException ex,
+            WebRequest request) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setInstance(extractPath(request));
         problemDetail.setProperty("timestamp", Instant.now());
         problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
@@ -82,6 +96,26 @@ public class ErrorHandler {
 
         return problemResponse(problemDetail);
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> handleNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setDetail("Request body could not be parsed or mapped to the expected schema.");
+        problemDetail.setInstance(extractPath(request));
+        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
+
+        // Optional: a stable, client-readable error list
+        problemDetail.setProperty("errors", List.of(Map.of(
+                "message", "Malformed JSON or invalid field type/format"
+        )));
+
+        return problemResponse(problemDetail);
+    }
+
+    /*
+    Helper Methods
+     */
 
     private URI extractPath(WebRequest request) {
         String desc = request.getDescription(false);
