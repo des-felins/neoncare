@@ -5,7 +5,6 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static dev.cat.backend.Tables.FACILITY;
 import static dev.cat.backend.Tables.SPECIALTY;
 
 public class ExistingSpecialtyValidator implements ConstraintValidator<ExistingSpecialty, Long> {

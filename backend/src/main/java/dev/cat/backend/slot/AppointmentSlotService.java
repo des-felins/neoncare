@@ -33,10 +33,6 @@ public class AppointmentSlotService {
 
     public Long createSlot(SlotRequest slot) {
 
-        if (!slot.endsAt().isAfter(slot.startsAt())) {
-            throw new InvalidInputException("End time must be later than start time");
-        }
-
         return repository.createSlot(slot);
     }
 

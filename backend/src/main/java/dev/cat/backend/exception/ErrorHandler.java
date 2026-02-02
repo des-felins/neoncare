@@ -50,30 +50,6 @@ public class ErrorHandler {
         return problemResponse(problemDetail);
     }
 
-    //TODO: Write a custom validator and unify with validation exceptions
-
-    @ExceptionHandler(InvalidInputException.class)
-    public ResponseEntity<ProblemDetail> handleInvalidInput(
-            InvalidInputException ex,
-            WebRequest request) {
-
-        String errorId = UUID.randomUUID().toString();
-
-        log.warn("errorId={} uri={} msg={}",
-                errorId, extractPath(request), ex.getMessage(), ex);
-
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-
-        problemDetail.setDetail("Invalid input.");
-        problemDetail.setInstance(extractPath(request));
-        problemDetail.setProperty("timestamp", Instant.now());
-        problemDetail.setProperty("errorId", errorId);
-        problemDetail.setProperty("errorCategory", "CLIENT_ERROR");
-        problemDetail.setType(ProblemType.VALIDATION_FAILED.uri);
-
-        return problemResponse(problemDetail);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> handleValidationExceptions(
             MethodArgumentNotValidException ex,

@@ -1,4 +1,4 @@
-package dev.cat.backend.slot.validation.specialty;
+package dev.cat.backend.slot.validation.time;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -8,15 +8,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = ExistingSpecialtyValidator.class)
-@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Constraint(validatedBy = EndAfterStartValidator.class)
+@Target( { ElementType.PARAMETER, ElementType.FIELD } )
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExistingSpecialty {
+public @interface EndAfterStart {
 
-    String message() default "Specialty with this id doesn't exist.";
-
+    String message() default "Slot end time must be later than start time.";
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
 
 }
