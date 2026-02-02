@@ -1,7 +1,6 @@
 package dev.cat.backend.slot;
 
 
-import dev.cat.backend.exception.InvalidInputException;
 import dev.cat.backend.exception.NotFoundException;
 import dev.cat.backend.slot.dto.SlotRequest;
 import dev.cat.backend.slot.dto.SlotResponse;
