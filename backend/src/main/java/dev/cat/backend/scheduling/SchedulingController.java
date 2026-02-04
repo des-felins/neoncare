@@ -1,6 +1,7 @@
 package dev.cat.backend.scheduling;
 
 
+import dev.cat.backend.scheduling.dto.SlotSuggestionResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;

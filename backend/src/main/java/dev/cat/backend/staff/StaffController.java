@@ -1,6 +1,7 @@
 package dev.cat.backend.staff;
 
 
+import dev.cat.backend.staff.dto.StaffResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;

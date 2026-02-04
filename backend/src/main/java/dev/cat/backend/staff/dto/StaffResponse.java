@@ -1,4 +1,4 @@
-package dev.cat.backend.staff;
+package dev.cat.backend.staff.dto;
 
 public record StaffResponse(Long staffId,
                             String handle,

@@ -1,4 +1,4 @@
-package dev.cat.backend.scheduling;
+package dev.cat.backend.scheduling.dto;
 
 import java.time.OffsetDateTime;
 

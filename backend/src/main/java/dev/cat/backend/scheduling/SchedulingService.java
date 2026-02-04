@@ -1,5 +1,6 @@
 package dev.cat.backend.scheduling;
 
+import dev.cat.backend.scheduling.dto.SlotSuggestionResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
